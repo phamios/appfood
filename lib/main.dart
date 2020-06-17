@@ -15,9 +15,9 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.red,
       ),
-      home: MyHomePage(title: 'Widget'),
+      home: MyHomePage(title: 'WinmartCook'),
     );
   }
 }
@@ -57,27 +57,29 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(widget.title),
       ),
       // body: _buildListView(),
-      body: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          _buildListView(data)
-          // Text(
-          //   'Demo Headline 2',
-          //   style: TextStyle(fontSize: 18),
-          // ),
-          // Expanded(
-          //   child: ListView.builder(
-          //     shrinkWrap: true,
-          //     itemBuilder: (ctx,int){
-          //       return Card(
-          //         child: ListTile(
-          //             title: Text('Motivation $int'),
-          //             subtitle: Text('this is a description of the motivation')),
-          //       );
-          //     },
-          //   ),
-          // ),
-        ],
+      body: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Text(
+              'Khu vực hiện tại: Hà Nội',
+              style: TextStyle(fontSize: 18),
+            ),
+            SizedBox(
+              height: 80.0,
+              child: _buildListView(data),
+            ),
+           
+            Text(
+              'Danh sách món ăn hôm nay',
+              style: TextStyle(fontSize: 18),
+            ),
+            Card(
+              child: ListTile(title: Text('Motivation $int'), subtitle: Text('this is a description of the motivation')),
+            ),
+            
+          ],
+        ),
       ),
     );
   }
@@ -87,9 +89,16 @@ class _MyHomePageState extends State<MyHomePage> {
       child: 
         ListView.builder(
               shrinkWrap: true,
+              
               scrollDirection: Axis.horizontal,
               itemCount: data == null ? 0 : data.length,
-              itemBuilder: (BuildContext context, int index) => Card(
+              itemBuilder: (BuildContext context, int index) => InkWell(
+                    onTap: () {
+                      Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => SecondRoute()),
+                    );
+                    },
                     child: Center(
                       child:  new CachedNetworkImage(
                           imageUrl: data[index]['thumbnail'],
@@ -97,9 +106,9 @@ class _MyHomePageState extends State<MyHomePage> {
                           errorWidget: (context, url, error) => new Icon(Icons.error),
                           fadeOutDuration: new Duration(seconds: 1),
                           fadeInDuration: new Duration(seconds: 3),
-                        ),
-                      ),
-                  ),
+                        ),  
+                      ),  
+                  ), 
             ),
     );
   }
@@ -124,19 +133,39 @@ class _MyHomePageState extends State<MyHomePage> {
   //     ),
   //   );
 
-  // Widget _buildRow(dynamic item) {
-  //   return ListTile(
-  //     title: Text(
-  //       item['itemName'] == null ? '': item['itemName'],
-  //     ),
-  //     subtitle: Text("Giá: " + item['unitPrice'].toString()),
-  //   );
-  // }
+  Widget _buildRow(dynamic item) {
+    return ListTile(
+      title: Text(
+        item['itemName'] == null ? '': item['itemName'],
+      ),
+      subtitle: Text("Giá: " + item['unitPrice'].toString()),
+    );
+  }
  
   @override
   void initState() {
     super.initState();
     // Call the getJSONData() method when the app initializes
     this.getJSONData();
+  }
+}
+
+
+class SecondRoute extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Second Route"),
+      ),
+      body: Center(
+        child: RaisedButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          child: Text('Go back!'),
+        ),
+      ),
+    );
   }
 }

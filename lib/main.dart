@@ -38,19 +38,17 @@ class _MyHomePageState extends State<MyHomePage> {
   // Function to get the JSON data
   Future<String> getJSONData() async {
     var response = await http.get(
-        // Encode the url
         Uri.encodeFull("https://cookapi.vinmart.com/api/menus/get"),
-        // Only accept JSON response
         headers: {"Accept": "application/json","ProvinceCode":"HAN"}
     );
 
     setState(() {
-      // Get the JSON data
       data = json.decode(response.body)['result'][0]['items'];
     });
 
     return "Successfull";
   }
+  
 
   @override
   Widget build(BuildContext context) {
@@ -59,74 +57,82 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(widget.title),
       ),
       // body: _buildListView(),
-      body: _buildListViewHorizonal(),
-    );
-  }
-
-  Widget _buildListView() {
-    return ListView.builder(
-      padding: const EdgeInsets.all(16.0),
-      itemCount: data == null ? 0 : data.length,
-      itemBuilder: (context, index) {
-        return _buildImageColumn(data[index]);
-        //return _buildRow(data[index]);
-      }
-    );
-  }
-
-   Widget _buildListViewHorizonal() {
-    return ListView.builder(
-      padding: const EdgeInsets.all(16.0),
-      itemCount: data == null ? 0 : data.length,
-      itemBuilder: (context, index) {
-        return _buildrowslide(data[index]);
-        
-      }
-    );
-  }
-
-  Widget _buildImageColumn(dynamic item) => Container(
-      decoration: BoxDecoration(
-        color: Colors.white54
-      ),
-      margin: const EdgeInsets.all(1),
-      child: Column(
-        children: [
-          new CachedNetworkImage(
-            imageUrl: item['thumbnail'],
-            placeholder: (context, url) => new CircularProgressIndicator(),
-            errorWidget: (context, url, error) => new Icon(Icons.error),
-            fadeOutDuration: new Duration(seconds: 1),
-            fadeInDuration: new Duration(seconds: 3),
-          ),
-          _buildRow(item)
+      body: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          _buildListView(data)
+          // Text(
+          //   'Demo Headline 2',
+          //   style: TextStyle(fontSize: 18),
+          // ),
+          // Expanded(
+          //   child: ListView.builder(
+          //     shrinkWrap: true,
+          //     itemBuilder: (ctx,int){
+          //       return Card(
+          //         child: ListTile(
+          //             title: Text('Motivation $int'),
+          //             subtitle: Text('this is a description of the motivation')),
+          //       );
+          //     },
+          //   ),
+          // ),
         ],
       ),
     );
+  }
 
-  Widget _buildRow(dynamic item) {
-    return ListTile(
-      title: Text(
-        item['itemName'] == null ? '': item['itemName'],
-      ),
-      subtitle: Text("Giá: " + item['unitPrice'].toString()),
+  Widget _buildListView(dynamic item) {
+    return Expanded(
+      child: 
+        ListView.builder(
+              shrinkWrap: true,
+              scrollDirection: Axis.horizontal,
+              itemCount: data == null ? 0 : data.length,
+              itemBuilder: (BuildContext context, int index) => Card(
+                    child: Center(
+                      child:  new CachedNetworkImage(
+                          imageUrl: data[index]['thumbnail'],
+                          placeholder: (context, url) => new CircularProgressIndicator(),
+                          errorWidget: (context, url, error) => new Icon(Icons.error),
+                          fadeOutDuration: new Duration(seconds: 1),
+                          fadeInDuration: new Duration(seconds: 3),
+                        ),
+                      ),
+                  ),
+            ),
     );
   }
+ 
 
+  // Widget _buildImageColumn(dynamic item) => Container(
+  //     decoration: BoxDecoration(
+  //       color: Colors.white54
+  //     ),
+  //     margin: const EdgeInsets.all(1),
+  //     child: Column(
+  //       children: [
+  //         new CachedNetworkImage(
+  //           imageUrl: item['thumbnail'],
+  //           placeholder: (context, url) => new CircularProgressIndicator(),
+  //           errorWidget: (context, url, error) => new Icon(Icons.error),
+  //           fadeOutDuration: new Duration(seconds: 1),
+  //           fadeInDuration: new Duration(seconds: 3),
+  //         ),
+  //         _buildRow(item)
+  //       ],
+  //     ),
+  //   );
 
-
-  Widget _buildrowslide(dynamic item){
-    return Card(
-        child: ListTile(
-          title: Text(
-          item['itemName'] == null ? '': item['itemName'],), 
-          subtitle: Text("Giá: " + item['unitPrice'].toString()
-          ),
-      ),
-      );
-  }
-
-
+  // Widget _buildRow(dynamic item) {
+  //   return ListTile(
+  //     title: Text(
+  //       item['itemName'] == null ? '': item['itemName'],
+  //     ),
+  //     subtitle: Text("Giá: " + item['unitPrice'].toString()),
+  //   );
+  // }
+ 
   @override
   void initState() {
     super.initState();
